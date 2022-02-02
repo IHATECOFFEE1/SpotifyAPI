@@ -1,18 +1,20 @@
 
-var XMLHttpRequest = require('xhr2');
-var request = require('request');
+const XMLHttpRequest = require('xhr2');
+const request = require('request');
+const $ = require('jquery');
+const secret = require('./Secret.js');
 
 var playlist_url = 'https://api.spotify.com/v1/users/' + user_id + '/playlists';
-var user_id = "fill here";
+var user_id = secret.user_id();
 var playlist_url = 'https://api.spotify.com/v1/users/' + user_id + '/playlists';
-var playlist_id = 'fill here';
+var playlist_id = secret.playlist_id();
 var playlist_items_url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks';
-var blah;
 
 //getPlaylist(access_Token);
 //getPlaylistItems(access_Token);
-//refresh();
+refresh(getPlaylistItems);
 //getPlaylist(access);
+
 
 
 function getPlaylist(access_token)
@@ -29,26 +31,28 @@ function getPlaylist(access_token)
 
 function getPlaylistItems(access_token)
 {
+  var numberOfSongs = 289;
+  var offset = 0;
   var limitOfitems = 1;
-  request({url : playlist_items_url+ "?market=US&fields=items(track(external_urls%2C%20artists(name)%2C%20name%2Calbum(images)))&limit=" + limitOfitems, headers: {"Authorization": "Bearer " + access_token}}, function(err, res) {
-    if(res){
+  request({url : playlist_items_url+ "?market=US&fields=items(track(external_urls%2C%20artists(name)%2C%20name%2Calbum(images)))&limit=" + limitOfitems+ "&offset=" + offset, headers: {"Authorization": "Bearer " + access_token}}, function(err, res) {
+    if(res)
+    {
       const obj = JSON.parse(res.body);
 
-      for(var key in obj.items[0])
-        console.log(key);
-
-      console.log("------");
-
-      for(var key in obj.items[0].track)
-      console.log(key);
+      for(var i = 0; i < limitOfitems; i++)
+      {
+        console.log(obj.items[i].track.album.images[0].url);
+        console.log(obj.items[i].track.artists[0].name);
+        console.log(obj.items[i].track.name);
       }
+    }
   })
 }
 
 function refresh(callback){
   var query = 'https://accounts.spotify.com/api/token';
-  var refresh_token = "fill here";
-  var base_64 = "fill here";
+  var refresh_token = secret.refresh_token();
+  var base_64 = secret.base_64();
   var access_token;
 
 
