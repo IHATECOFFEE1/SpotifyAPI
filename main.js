@@ -3,6 +3,8 @@ const XMLHttpRequest = require('xhr2');
 const request = require('request');
 const $ = require('jquery');
 const secret = require('./Secret.js');
+const express = require('express');
+const bodyParser = require('body-parser');
 
 var playlist_url = 'https://api.spotify.com/v1/users/' + user_id + '/playlists';
 var user_id = secret.user_id();
@@ -10,9 +12,11 @@ var playlist_url = 'https://api.spotify.com/v1/users/' + user_id + '/playlists';
 var playlist_id = secret.playlist_id();
 var playlist_items_url = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks';
 
+var app = express();
+
 //getPlaylist(access_Token);
 //getPlaylistItems(access_Token);
-refresh(getPlaylistItems);
+//refresh(getPlaylistItems);
 //getPlaylist(access);
 
 
@@ -81,3 +85,13 @@ function refresh(callback){
   });
 
 }
+
+app.get("/", function(req, res)
+{
+  res.sendFile(__dirname + "/index.html");
+})
+
+app.listen(3000, () =>
+{
+  console.log("Running");
+};
